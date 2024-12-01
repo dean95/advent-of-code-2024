@@ -1,18 +1,9 @@
 import kotlin.math.abs
 
 fun main() {
-    fun parseInput(input: List<String>): Pair<List<Int>, List<Int>> {
-        val firstList = mutableListOf<Int>()
-        val secondList = mutableListOf<Int>()
-
-        input.forEach { line ->
-            val (firstNumber, secondNumber) = line.split("\\s+".toRegex()).map(String::toInt)
-            firstList.add(firstNumber)
-            secondList.add(secondNumber)
-        }
-
-        return firstList to secondList
-    }
+    fun parseInput(input: List<String>): Pair<List<Int>, List<Int>> = input.map { line ->
+        line.split("\\s+".toRegex()).map(String::toInt).let { it[0] to it[1] }
+    }.unzip()
 
     fun part1(input: List<String>): Int {
         val (firstList, secondList) = parseInput(input)
