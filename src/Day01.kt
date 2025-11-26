@@ -1,26 +1,46 @@
 import kotlin.math.abs
 
 fun main() {
-    fun parseInput(input: List<String>): Pair<List<Int>, List<Int>> = input.map { line ->
-        line.split("\\s+".toRegex()).map(String::toInt).let { it[0] to it[1] }
-    }.unzip()
+    fun parseInput(input: List<String>): Pair<List<Int>, List<Int>> {
+        val firstList = mutableListOf<Int>()
+        val secondList = mutableListOf<Int>()
+
+        input.forEach { line ->
+            val (a, b) = line.trim().split(Regex("\\s+")).map { it.toInt() }
+            firstList.add(a)
+            secondList.add(b)
+        }
+
+        return firstList to secondList
+    }
 
     fun part1(input: List<String>): Int {
         val (firstList, secondList) = parseInput(input)
 
-        return firstList.sorted()
-            .zip(secondList.sorted())
-            .sumOf { (firstNumber, secondNumber) -> abs(firstNumber - secondNumber) }
+        val firstSorted = firstList.sorted()
+        val secondSorted = secondList.sorted()
+
+        var sum = 0
+        firstSorted.zip(secondSorted).forEach { (a, b) ->
+            val dist = abs(a - b)
+            sum += dist
+        }
+
+        return sum
     }
 
     fun part2(input: List<String>): Int {
         val (firstList, secondList) = parseInput(input)
 
-        val numberFrequencyMap = secondList.groupingBy { it }.eachCount()
+        val freqMap = secondList.groupBy { it }.mapValues { (_, value) -> value.count() }
 
-        return firstList.sumOf { n ->
-            n * numberFrequencyMap.getOrDefault(n, 0)
+        var res = 0
+        firstList.forEach { a ->
+            val b = freqMap[a] ?: 0
+            res += a * b
         }
+
+        return res
     }
 
     val input = readInput("Day01")
