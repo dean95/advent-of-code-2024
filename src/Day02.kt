@@ -1,37 +1,72 @@
+import kotlin.math.abs
+
 private fun main() {
-    fun isSafe(numbers: List<Int>): Boolean {
-        val zipped = numbers.zipWithNext()
-        val allDec = zipped.all { (a, b) ->
-            a > b && a - b in 1..3
+
+    fun parseInput(input: List<String>): List<List<Int>> {
+        val reports = mutableListOf<List<Int>>()
+
+        input.forEach { line ->
+            val level = line.split(' ').map { it.toInt() }
+            reports.add(level)
         }
-        val allInc = zipped.all { (a, b) ->
-            b > a && b - a in 1..3
+
+        return reports
+    }
+
+    fun isSafe(report: List<Int>): Boolean {
+        var direction = 0
+
+        for (i in 1..report.lastIndex) {
+            val prev = report[i - 1]
+            val current = report[i]
+
+            val diff = current - prev
+
+            if (abs(diff) !in 1..3) return false
+
+            if (direction == 1 && diff <= 0) return false
+            if (direction == -1 && diff >= 0) return false
+
+            if (direction != 0) continue
+            direction = if (diff > 0) 1 else -1
         }
-        return allInc || allDec
+
+        return true
     }
 
     fun part1(input: List<String>): Int {
-        var validCount = 0
+        val reports = parseInput(input)
 
-        input.forEach { line ->
-            if (isSafe(line.split(' ').map(String::toInt))) validCount++
+        var safeReports = 0
+        for (report in reports) {
+            if (isSafe(report)) safeReports++
         }
 
-        return validCount
+        return safeReports
     }
 
     fun part2(input: List<String>): Int {
-        var validCount = 0
-        input.forEach { line ->
-            val numbers = line.split(' ').map(String::toInt)
-            for (i in numbers.indices) {
-                if (isSafe(numbers.toMutableList().apply { removeAt(i) })) {
-                    validCount++
+        val reports = parseInput(input)
+
+        var safeReports = 0
+        for (report in reports) {
+            val mutableReport = report.toMutableList()
+            if (isSafe(mutableReport)) {
+                safeReports++
+                continue
+            }
+
+            for (i in report.indices) {
+                val element = mutableReport.removeAt(i)
+                if (isSafe(mutableReport)) {
+                    safeReports++
                     break
                 }
+                mutableReport.add(i, element)
             }
         }
-        return validCount
+
+        return safeReports
     }
 
     val input = readInput("Day02")
