@@ -54,29 +54,21 @@ private fun main() {
         return res
     }
 
-    fun part1(input: List<String>): Int {
+    fun getAntinodeCount(input: List<String>, extend: Boolean): Int {
         val antennaPositions = parseAntennaPositions(input)
 
         val antinodeLocations = mutableSetOf<Pair<Int, Int>>()
 
         for ((_, positions) in antennaPositions) {
-            antinodeLocations.addAll(findAntinodePositions(input.size, input.first().length, positions, extend = false))
+            antinodeLocations.addAll(findAntinodePositions(input.size, input.first().length, positions, extend))
         }
 
         return antinodeLocations.size
     }
 
-    fun part2(input: List<String>): Int {
-        val antennaPositions = parseAntennaPositions(input)
+    fun part1(input: List<String>) = getAntinodeCount(input, extend = false)
 
-        val antinodeLocations = mutableSetOf<Pair<Int, Int>>()
-
-        for ((_, positions) in antennaPositions) {
-            antinodeLocations.addAll(findAntinodePositions(input.size, input.first().length, positions, extend = true))
-        }
-
-        return antinodeLocations.size
-    }
+    fun part2(input: List<String>) = getAntinodeCount(input, extend = true)
 
     val input = readInput("Day08")
     part1(input).println()
